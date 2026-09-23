@@ -7,7 +7,7 @@
 // the things this pilot is meant to find out.
 //
 // Set this to whichever mailbox you want test submissions to land in.
-$recipient = 'info@example.com';
+$recipient = 'info@garrymconsulting.com';
 
 header('Content-Type: application/json');
 
