@@ -1,0 +1,13 @@
+# SPA fallback for Apache/cPanel-style hosting (e.g. Spaceship).
+# Serves index.html for any request that isn't a real file/directory,
+# so client-side routes like /about resolve instead of 404ing.
+# Only needed if the host's build/deploy step doesn't already configure
+# an equivalent rewrite automatically.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
