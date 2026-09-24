@@ -18,6 +18,24 @@ $recipient = 'info@garrymconsulting.com';
 
 header('Content-Type: application/json');
 
+// Shared hosting typically has display_errors off, which turns a PHP
+// fatal error into a blank 500 response with no indication of what broke.
+// Catch that case explicitly so it still surfaces as JSON.
+register_shutdown_function(function () {
+    $error = error_get_last();
+    if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        if (!headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: application/json');
+        }
+        echo json_encode([
+            'ok' => false,
+            'reason' => 'fatal-error',
+            'detail' => $error['message'] . ' in ' . $error['file'] . ':' . $error['line'],
+        ]);
+    }
+});
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['ok' => false, 'reason' => 'method-not-allowed']);
@@ -101,7 +119,7 @@ try {
     fclose($sock);
 
     echo json_encode(['ok' => true]);
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     http_response_code(500);
     echo json_encode(['ok' => false, 'reason' => 'smtp-error', 'detail' => $e->getMessage()]);
 }
