@@ -60,7 +60,7 @@ try {
         $errno,
         $errstr,
         15,
-        STREAM_CLIENT_CONNECT,
+        STREAM_CLIENT_CONNECT
     );
     if (!$sock) {
         throw new Exception("Connect failed: $errstr ($errno)");
